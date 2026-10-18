@@ -199,6 +199,17 @@ async def health() -> dict[str, Any]:
     }
 
 
+@app.get("/version")
+@app.get("/api/version")
+async def version() -> dict[str, Any]:
+    return {
+        "version": "1.0.0",
+        "name": "olake-assistant",
+        "status": "ok",
+        "chunks": len(retriever.chunks),
+    }
+
+
 @app.post("/api/sync")
 @app.post("/sync")
 async def trigger_sync(request: Request) -> JSONResponse:

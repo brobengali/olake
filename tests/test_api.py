@@ -24,6 +24,15 @@ def test_health():
     assert body["chunks"] > 5
 
 
+def test_version():
+    for path in ("/version", "/api/version"):
+        res = client.get(path)
+        assert res.status_code == 200
+        body = res.json()
+        assert body["version"] == "1.0.0"
+        assert body["status"] == "ok"
+
+
 def test_chat_helm():
     res = client.post("/api/chat", json={"message": "How do I install OLake with Helm?"})
     assert res.status_code == 200
