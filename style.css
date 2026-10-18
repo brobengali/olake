@@ -1,0 +1,1519 @@
+/* ==========================================================================
+   OLAKE ASSISTANT — DESIGN SYSTEM & STYLESHEET
+   Faithfully replicates the OLake.io marketing & Docusaurus documentation UI/UX
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Design Tokens & CSS Variables
+   -------------------------------------------------------------------------- */
+:root {
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* OLake Brand Blue Palette */
+  --olake-blue: #193ae6;
+  --olake-blue-hover: #142eb8;
+  --olake-blue-tint: rgba(25, 58, 230, 0.08);
+  --olake-blue-tint-strong: rgba(25, 58, 230, 0.16);
+  --olake-blue-on-dark: #38bdf8;
+  --olake-on-blue: #ffffff;
+
+  /* Light Theme Surfaces & Colors */
+  --olake-bg: #f8fafc;
+  --olake-surface: #ffffff;
+  --olake-surface-alt: #f1f5f9;
+  --olake-surface-card: #ffffff;
+  --olake-line: #e2e8f0;
+  --olake-line-subtle: #edf2f7;
+  --olake-ink: #0f172a;
+  --olake-text: #334155;
+  --olake-muted: #64748b;
+  --olake-subtle: #94a3b8;
+
+  /* Shadows */
+  --olake-shadow-nav: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+  --olake-shadow-menu: 0 12px 32px -4px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+  --olake-shadow-card: 0 2px 8px -1px rgba(15, 23, 42, 0.05);
+  --olake-shadow-card-hover: 0 12px 28px -4px rgba(25, 58, 230, 0.12), 0 4px 10px -2px rgba(15, 23, 42, 0.05);
+
+  /* Code & Syntax */
+  --code-bg: #0d1117;
+  --code-header-bg: #161b22;
+  --code-border: #30363d;
+  --code-text: #e6edf3;
+
+  /* Animation Easings */
+  --olake-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --olake-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-fast: 160ms var(--olake-ease);
+  --transition-normal: 240ms var(--olake-ease);
+}
+
+/* --------------------------------------------------------------------------
+   Dark Mode Tokens (Default in OLake)
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] {
+  --olake-bg: #080c14;
+  --olake-surface: #0d111a;
+  --olake-surface-alt: #131926;
+  --olake-surface-card: #0f1523;
+  --olake-line: #1e293b;
+  --olake-line-subtle: #151d2a;
+  --olake-ink: #f8fafc;
+  --olake-text: #cbd5e1;
+  --olake-muted: #8492a6;
+  --olake-subtle: #475569;
+  --olake-blue-tint: rgba(56, 189, 248, 0.1);
+  --olake-blue-tint-strong: rgba(56, 189, 248, 0.2);
+
+  --olake-shadow-nav: 0 8px 30px -4px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --olake-shadow-menu: 0 16px 40px -6px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --olake-shadow-card: 0 4px 14px -2px rgba(0, 0, 0, 0.4);
+  --olake-shadow-card-hover: 0 14px 34px -4px rgba(25, 58, 230, 0.25), 0 0 0 1px rgba(56, 189, 248, 0.2);
+
+  --code-bg: #090d16;
+  --code-header-bg: #111827;
+  --code-border: #1e293b;
+  --code-text: #f0f6fc;
+}
+
+/* --------------------------------------------------------------------------
+   Reset & Baseline
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--olake-text);
+  background-color: var(--olake-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  position: relative;
+  background-color: var(--olake-bg);
+  color: var(--olake-ink);
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+a {
+  color: var(--olake-blue);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+html[data-theme="dark"] a {
+  color: var(--olake-blue-on-dark);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* --------------------------------------------------------------------------
+   Ambient Background & Glow Effects
+   -------------------------------------------------------------------------- */
+.olake-ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.olake-glow-mesh {
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1000px;
+  height: 600px;
+  background: radial-gradient(ellipse at 50% 30%, rgba(25, 58, 230, 0.15) 0%, rgba(56, 189, 248, 0.08) 45%, transparent 70%);
+  filter: blur(80px);
+  opacity: 0.8;
+}
+
+#bg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.45;
+}
+
+/* --------------------------------------------------------------------------
+   Master App Layout
+   -------------------------------------------------------------------------- */
+.olake-layout {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* --------------------------------------------------------------------------
+   Floating Navigation Card (Signature OLake Header)
+   -------------------------------------------------------------------------- */
+.olake-header-wrap {
+  width: 100%;
+  padding: 16px 20px 8px;
+  flex-shrink: 0;
+}
+
+.olake-nav-card {
+  max-width: 1016px;
+  height: 56px;
+  margin: 0 auto;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--olake-surface);
+  border: 1px solid var(--olake-line);
+  border-radius: 16px;
+  box-shadow: var(--olake-shadow-nav);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all var(--transition-normal);
+}
+
+.olake-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.olake-mobile-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: var(--olake-ink);
+  transition: background-color var(--transition-fast);
+}
+
+.olake-mobile-toggle:hover {
+  background: var(--olake-blue-tint);
+}
+
+.olake-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.olake-logo-svg {
+  flex-shrink: 0;
+  transition: transform var(--transition-fast);
+}
+
+.olake-brand:hover .olake-logo-svg {
+  transform: scale(1.05);
+}
+
+.olake-brand-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--olake-blue);
+  line-height: 1;
+}
+
+html[data-theme="dark"] .olake-brand-title {
+  color: var(--olake-blue-on-dark);
+}
+
+.olake-ai-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  background: var(--olake-blue-tint);
+  color: var(--olake-blue);
+  border: 1px solid rgba(25, 58, 230, 0.18);
+  letter-spacing: 0.02em;
+}
+
+html[data-theme="dark"] .olake-ai-pill {
+  color: var(--olake-blue-on-dark);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+.ai-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseGreen {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.olake-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-left: 8px;
+}
+
+.olake-nav-link {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--olake-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.olake-nav-link:hover {
+  color: var(--olake-ink);
+  text-decoration: none;
+}
+
+.olake-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* GitHub Star Pill Button */
+.olake-github-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--olake-text);
+  background: var(--olake-surface-alt);
+  border: 1px solid var(--olake-line);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.olake-github-btn:hover {
+  background: var(--olake-blue-tint);
+  border-color: var(--olake-blue);
+  color: var(--olake-blue);
+  text-decoration: none;
+}
+
+.gh-count {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--olake-line);
+  color: var(--olake-muted);
+}
+
+/* Nav Icon Buttons (Theme & Settings) */
+.olake-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: var(--olake-muted);
+  border: 1px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.olake-icon-btn:hover {
+  color: var(--olake-ink);
+  background: var(--olake-surface-alt);
+  border-color: var(--olake-line);
+}
+
+html[data-theme="dark"] .theme-icon-sun { display: block; }
+html[data-theme="dark"] .theme-icon-moon { display: none; }
+html[data-theme="light"] .theme-icon-sun { display: none; }
+html[data-theme="light"] .theme-icon-moon { display: block; }
+
+/* Primary Button in Nav */
+.olake-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--olake-blue);
+  color: var(--olake-on-blue);
+  border-radius: 9px;
+  box-shadow: 0 2px 8px rgba(25, 58, 230, 0.25);
+  transition: all var(--transition-fast);
+}
+
+.olake-primary-btn:hover {
+  background: var(--olake-blue-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(25, 58, 230, 0.35);
+}
+
+/* --------------------------------------------------------------------------
+   Workspace Layout (Sidebar + Chat Pane)
+   -------------------------------------------------------------------------- */
+.olake-workspace {
+  flex: 1;
+  display: flex;
+  max-width: 1380px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px 14px;
+  gap: 20px;
+  min-height: 0; /* Critical for inner scrolling */
+}
+
+/* --------------------------------------------------------------------------
+   Docusaurus-Style Docs Sidebar
+   -------------------------------------------------------------------------- */
+.olake-sidebar {
+  width: 275px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--olake-surface);
+  border: 1px solid var(--olake-line);
+  border-radius: 16px;
+  box-shadow: var(--olake-shadow-card);
+  overflow: hidden;
+  transition: transform var(--transition-normal);
+}
+
+.sidebar-top {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--olake-line);
+}
+
+.sidebar-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 10px;
+  background: var(--olake-surface-alt);
+  border: 1px solid var(--olake-line);
+  border-radius: 8px;
+  color: var(--olake-muted);
+}
+
+.sidebar-search-box:focus-within {
+  border-color: var(--olake-blue);
+  box-shadow: 0 0 0 2px var(--olake-blue-tint);
+}
+
+.sidebar-search-box input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--olake-ink);
+  outline: none;
+}
+
+.sidebar-search-box input::placeholder {
+  color: var(--olake-muted);
+}
+
+.sidebar-tree {
+  flex: 1;
+  padding: 12px 8px;
+  overflow-y: auto;
+}
+
+.tree-category {
+  margin-bottom: 14px;
+}
+
+.tree-category-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--olake-muted);
+  padding: 4px 10px 6px;
+}
+
+.tree-items {
+  list-style: none;
+}
+
+.tree-item-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--olake-text);
+  border-radius: 8px;
+  text-align: left;
+  transition: all var(--transition-fast);
+}
+
+.tree-item-btn:hover {
+  background: var(--olake-blue-tint);
+  color: var(--olake-blue);
+}
+
+html[data-theme="dark"] .tree-item-btn:hover {
+  color: var(--olake-blue-on-dark);
+}
+
+.tree-icon {
+  font-size: 13px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.tree-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-item-empty {
+  font-size: 12px;
+  color: var(--olake-muted);
+  padding: 6px 10px;
+  font-style: italic;
+}
+
+.sidebar-bottom {
+  padding: 10px 14px;
+  border-top: 1px solid var(--olake-line);
+  background: var(--olake-surface-alt);
+}
+
+.sidebar-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--olake-muted);
+  text-decoration: none;
+}
+
+.sidebar-link-btn:hover {
+  color: var(--olake-blue);
+  text-decoration: none;
+}
+
+/* --------------------------------------------------------------------------
+   Main Chat Pane
+   -------------------------------------------------------------------------- */
+.olake-chat-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+  background: var(--olake-surface);
+  border: 1px solid var(--olake-line);
+  border-radius: 16px;
+  box-shadow: var(--olake-shadow-card);
+  overflow: hidden;
+}
+
+/* Messages Stream Viewport */
+.olake-stream-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px 130px; /* bottom padding clears the floating dock */
+  scroll-behavior: smooth;
+}
+
+/* --------------------------------------------------------------------------
+   Hero Welcome View (OLake Style)
+   -------------------------------------------------------------------------- */
+.olake-hero-welcome {
+  max-width: 760px;
+  margin: 20px auto 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.4s var(--olake-ease);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-brand-mark {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--olake-surface);
+  border: 1px solid var(--olake-line);
+  border-radius: 20px;
+  box-shadow: var(--olake-shadow-card);
+}
+
+.hero-halo {
+  position: absolute;
+  inset: -12px;
+  border-radius: 28px;
+  background: radial-gradient(circle, rgba(25, 58, 230, 0.25) 0%, transparent 70%);
+  filter: blur(10px);
+  z-index: 0;
+}
+
+.hero-svg {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-headline {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--olake-ink);
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+
+.hero-description {
+  font-size: 15px;
+  color: var(--olake-muted);
+  max-width: 600px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.hero-description strong {
+  color: var(--olake-ink);
+  font-weight: 600;
+}
+
+.hero-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--olake-muted);
+  background: var(--olake-surface-alt);
+  border: 1px solid var(--olake-line);
+  padding: 5px 14px;
+  border-radius: 9999px;
+  margin-bottom: 34px;
+}
+
+.status-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.status-pulse-dot.offline {
+  background-color: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+}
+
+/* Suggestion Cards Grid */
+.olake-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.olake-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  text-align: left;
+  background: var(--olake-surface-card);
+  border: 1px solid var(--olake-line);
+  border-radius: 14px;
+  box-shadow: var(--olake-shadow-card);
+  transition: all var(--transition-fast);
+}
+
+.olake-card:hover {
+  border-color: var(--olake-blue);
+  background: var(--olake-surface-alt);
+  transform: translateY(-2px);
+  box-shadow: var(--olake-shadow-card-hover);
+}
+
+html[data-theme="dark"] .olake-card:hover {
+  border-color: var(--olake-blue-on-dark);
+}
+
+.card-icon-wrap {
+  font-size: 18px;
+  line-height: 1;
+  padding: 8px;
+  border-radius: 10px;
+  background: var(--olake-blue-tint);
+  flex-shrink: 0;
+}
+
+.card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--olake-ink);
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-arrow {
+  color: var(--olake-muted);
+  font-weight: 400;
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.olake-card:hover .card-arrow {
+  color: var(--olake-blue);
+  transform: translateX(3px);
+}
+
+html[data-theme="dark"] .olake-card:hover .card-arrow {
+  color: var(--olake-blue-on-dark);
+}
+
+.card-desc {
+  font-size: 12px;
+  color: var(--olake-muted);
+  line-height: 1.4;
+}
+
+/* --------------------------------------------------------------------------
+   Messages Stream & Bubbles
+   -------------------------------------------------------------------------- */
+.olake-messages-list {
+  max-width: 820px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.message-item {
+  display: flex;
+  gap: 14px;
+  animation: messageIn 0.25s var(--olake-ease);
+}
+
+@keyframes messageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.message-item.user {
+  flex-direction: row-reverse;
+}
+
+.message-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.message-item.assistant .message-avatar {
+  background: var(--olake-surface-alt);
+  border: 1px solid var(--olake-line);
+  color: var(--olake-blue);
+}
+
+html[data-theme="dark"] .message-item.assistant .message-avatar {
+  color: var(--olake-blue-on-dark);
+}
+
+.message-item.user .message-avatar {
+  background: var(--olake-blue);
+  color: var(--olake-on-blue);
+}
+
+.message-bubble {
+  max-width: 86%;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 14.5px;
+  line-height: 1.65;
+  position: relative;
+}
+
+.message-item.user .message-bubble {
+  background: var(--olake-blue);
+  color: var(--olake-on-blue);
+  border-radius: 16px 16px 4px 16px;
+  box-shadow: 0 4px 16px rgba(25, 58, 230, 0.2);
+}
+
+.message-item.assistant .message-bubble {
+  background: var(--olake-surface-card);
+  color: var(--olake-text);
+  border: 1px solid var(--olake-line);
+  border-radius: 16px 16px 16px 4px;
+  box-shadow: var(--olake-shadow-card);
+  width: 100%;
+}
+
+.message-item.assistant .message-bubble strong {
+  color: var(--olake-ink);
+}
+
+/* Typography Inside Assistant Messages */
+.message-bubble h1, .message-bubble h2, .message-bubble h3, .message-bubble h4 {
+  color: var(--olake-ink);
+  margin: 14px 0 8px;
+  line-height: 1.3;
+}
+.message-bubble h1 { font-size: 18px; }
+.message-bubble h2 { font-size: 16px; }
+.message-bubble h3 { font-size: 14.5px; }
+.message-bubble p { margin-bottom: 10px; }
+.message-bubble p:last-child { margin-bottom: 0; }
+.message-bubble ul, .message-bubble ol {
+  margin: 8px 0 12px 22px;
+}
+.message-bubble li {
+  margin-bottom: 4px;
+}
+
+/* Docusaurus Admonition Boxes inside messages */
+.olake-callout {
+  margin: 14px 0;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border-left: 4px solid var(--olake-blue);
+  background: var(--olake-blue-tint);
+  font-size: 13.5px;
+}
+
+.olake-callout.tip {
+  border-left-color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.olake-callout.warning {
+  border-left-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.callout-title {
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Code Blocks with Header Bar & Copy Button */
+.code-block-wrapper {
+  margin: 14px 0;
+  border-radius: 10px;
+  border: 1px solid var(--code-border);
+  background: var(--code-bg);
+  overflow: hidden;
+}
+
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 14px;
+  background: var(--code-header-bg);
+  border-bottom: 1px solid var(--code-border);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--olake-muted);
+}
+
+.code-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--olake-muted);
+  transition: all var(--transition-fast);
+}
+
+.code-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+pre {
+  margin: 0;
+  padding: 14px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--code-text);
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+}
+
+p code, li code {
+  background: var(--olake-blue-tint);
+  color: var(--olake-blue);
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 12.5px;
+}
+
+html[data-theme="dark"] p code, html[data-theme="dark"] li code {
+  color: var(--olake-blue-on-dark);
+}
+
+/* Source Citations Section (Grounded Docs Badge) */
+.sources-card {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--olake-line);
+}
+
+.sources-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--olake-muted);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sources-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.source-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 500;
+  background: var(--olake-surface-alt);
+  border: 1px solid var(--olake-line);
+  color: var(--olake-text);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.source-pill:hover {
+  background: var(--olake-blue-tint);
+  border-color: var(--olake-blue);
+  color: var(--olake-blue);
+  text-decoration: none;
+}
+
+html[data-theme="dark"] .source-pill:hover {
+  color: var(--olake-blue-on-dark);
+}
+
+/* Assistant Message Action Bar */
+.message-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 8px;
+}
+
+.action-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  color: var(--olake-muted);
+  padding: 3px 7px;
+  border-radius: 5px;
+  transition: all var(--transition-fast);
+}
+
+.action-chip:hover {
+  background: var(--olake-surface-alt);
+  color: var(--olake-ink);
+}
+
+/* Typing Indicator Animation */
+.typing-bubble {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 14px 20px;
+}
+
+.typing-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--olake-muted);
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* --------------------------------------------------------------------------
+   Floating Bottom Input Dock
+   -------------------------------------------------------------------------- */
+.olake-bottom-dock {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 24px 16px;
+  background: linear-gradient(to top, var(--olake-surface) 60%, transparent 100%);
+  pointer-events: none;
+}
+
+.olake-prompt-card {
+  max-width: 820px;
+  margin: 0 auto;
+  pointer-events: auto;
+  background: var(--olake-surface);
+  border: 1px solid var(--olake-line);
+  border-radius: 16px;
+  box-shadow: var(--olake-shadow-menu);
+  padding: 10px 14px;
+  transition: all var(--transition-fast);
+}
+
+.olake-prompt-card:focus-within {
+  border-color: var(--olake-blue);
+  box-shadow: 0 0 0 3px var(--olake-blue-tint), var(--olake-shadow-menu);
+}
+
+html[data-theme="dark"] .olake-prompt-card:focus-within {
+  border-color: var(--olake-blue-on-dark);
+}
+
+.prompt-input-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.olake-textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--olake-ink);
+  resize: none;
+  min-height: 24px;
+  max-height: 160px;
+  padding: 4px 2px;
+}
+
+.olake-textarea::placeholder {
+  color: var(--olake-muted);
+}
+
+.prompt-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.action-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: var(--olake-muted);
+  transition: all var(--transition-fast);
+}
+
+.action-btn-ghost:hover {
+  background: var(--olake-surface-alt);
+  color: var(--olake-ink);
+}
+
+.char-pill {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--olake-muted);
+  padding: 0 4px;
+}
+
+.olake-send-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--olake-blue);
+  color: var(--olake-on-blue);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.olake-send-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background: var(--olake-line);
+  color: var(--olake-muted);
+}
+
+.olake-send-btn:not(:disabled):hover {
+  background: var(--olake-blue-hover);
+  transform: translateY(-1px);
+}
+
+.prompt-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--olake-line-subtle);
+  text-align: center;
+}
+
+.engine-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--olake-muted);
+}
+
+.badge-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #10b981;
+}
+
+.disclaimer-text {
+  font-size: 11px;
+  color: var(--olake-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Settings Slide-in Drawer
+   -------------------------------------------------------------------------- */
+.settings-drawer {
+  position: fixed;
+  top: 0;
+  right: -360px;
+  width: 340px;
+  height: 100vh;
+  height: 100dvh;
+  background: var(--olake-surface);
+  border-left: 1px solid var(--olake-line);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-normal);
+}
+
+.settings-drawer.open {
+  transform: translateX(-360px);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--olake-line);
+}
+
+.drawer-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--olake-ink);
+}
+
+.drawer-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: var(--olake-muted);
+}
+
+.drawer-close-btn:hover {
+  background: var(--olake-surface-alt);
+  color: var(--olake-ink);
+}
+
+.drawer-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.drawer-field {
+  margin-bottom: 18px;
+}
+
+.drawer-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--olake-ink);
+  margin-bottom: 4px;
+}
+
+.drawer-hint {
+  font-size: 11.5px;
+  color: var(--olake-muted);
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.drawer-input {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--olake-line);
+  background: var(--olake-surface-alt);
+  color: var(--olake-ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  outline: none;
+}
+
+.drawer-input:focus {
+  border-color: var(--olake-blue);
+  box-shadow: 0 0 0 2px var(--olake-blue-tint);
+}
+
+.drawer-divider {
+  height: 1px;
+  background: var(--olake-line);
+  margin: 20px 0;
+}
+
+.drawer-section h4 {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--olake-ink);
+  margin-bottom: 6px;
+}
+
+.drawer-text {
+  font-size: 12px;
+  color: var(--olake-muted);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.drawer-repo-list {
+  list-style: none;
+}
+
+.drawer-repo-list li {
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 99;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+}
+
+.drawer-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Toast Notifications
+   -------------------------------------------------------------------------- */
+.olake-toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+}
+
+.olake-toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--olake-surface);
+  border: 1px solid var(--olake-line);
+  border-radius: 10px;
+  box-shadow: var(--olake-shadow-menu);
+  font-size: 13px;
+  color: var(--olake-ink);
+  animation: toastIn 0.25s var(--olake-ease);
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.olake-toast.leaving {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.25s ease;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Design & Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 960px) {
+  .olake-nav-links {
+    display: none;
+  }
+  .olake-mobile-toggle {
+    display: inline-flex;
+  }
+
+  .olake-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: -290px;
+    z-index: 90;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.4);
+  }
+
+  .olake-sidebar.open {
+    transform: translateX(290px);
+  }
+
+  .sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 89;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-fast);
+  }
+
+  .sidebar-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .olake-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-headline {
+    font-size: 23px;
+  }
+}
+
+@media (max-width: 640px) {
+  .olake-header-wrap {
+    padding: 10px 12px 6px;
+  }
+
+  .olake-nav-card {
+    height: 50px;
+    padding: 0 12px;
+  }
+
+  .gh-text {
+    display: none;
+  }
+
+  .olake-workspace {
+    padding: 0 10px 10px;
+  }
+
+  .olake-stream-container {
+    padding: 16px 14px 130px;
+  }
+
+  .olake-bottom-dock {
+    padding: 10px 12px 12px;
+  }
+
+  .hero-headline {
+    font-size: 20px;
+  }
+
+  .hero-description {
+    font-size: 13.5px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Embed Mode (for iframe embedding in docs or widgets)
+   -------------------------------------------------------------------------- */
+body.embed-mode .olake-header-wrap {
+  padding: 8px 12px 4px;
+}
+
+body.embed-mode .olake-nav-card {
+  height: 44px;
+  border-radius: 12px;
+}
+
+body.embed-mode .olake-nav-links,
+body.embed-mode .olake-github-btn {
+  display: none !important;
+}
+
+body.embed-mode .olake-sidebar {
+  display: none;
+}
+
+body.embed-mode .olake-sidebar.open {
+  display: flex;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 90;
+  width: 280px;
+}
+
+body.embed-mode .olake-mobile-toggle {
+  display: inline-flex !important;
+}
+
+body.embed-mode .olake-workspace {
+  padding: 0 10px 10px;
+}
+
+body.embed-mode .olake-stream-container {
+  padding: 12px 14px 125px;
+}
+
+body.embed-mode .olake-cards-grid {
+  grid-template-columns: 1fr;
+}
+
+body.embed-mode .hero-headline {
+  font-size: 20px;
+}
+
+body.embed-mode .hero-description {
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+body.embed-mode .olake-bottom-dock {
+  padding: 8px 12px 10px;
+}

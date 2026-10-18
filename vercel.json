@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server/main.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "{index.html,style.css,app.js,embed.js}",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(ask|api/.*|chat)",
+      "dest": "server/main.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}

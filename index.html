@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OLake Assistant – Open Source Iceberg Ingestion &amp; Maintenance</title>
+  <meta name="description" content="Official documentation assistant for OLake. Get instant answers about OLake Go, CDC sync modes, Apache Iceberg catalogs, OLake Fusion table maintenance, and Helm deployment." />
+  <meta property="og:title" content="OLake Assistant" />
+  <meta property="og:description" content="Ask anything about database replication to Apache Iceberg with OLake Go & OLake Fusion." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://olake.io/img/logo/olake-og-card.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='42' fill='none' viewBox='0 0 42 42'%3E%3Cpath fill='%23193ae6' d='M41.785 0H0v22.548c17.383-1.832 41.72-2.29 29.8 4.123-8.074 4.343-2.538 5.945 2.308 7.348 3.154.913 6.016 1.741 4.645 3.186-2.791 2.942 2.742 4.112 5.032 4.459z'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Ambient background grid -->
+  <div class="olake-ambient-bg" aria-hidden="true">
+    <div class="olake-glow-mesh"></div>
+    <canvas id="bg-canvas"></canvas>
+  </div>
+
+  <div class="olake-layout">
+    <!-- Floating OLake Navigation Card -->
+    <header class="olake-header-wrap">
+      <nav class="olake-nav-card" aria-label="Main Navigation">
+        <!-- Left: Brand Logo & Title -->
+        <div class="olake-nav-left">
+          <button type="button" class="olake-mobile-toggle" id="sidebar-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </button>
+
+          <a href="https://olake.io" target="_blank" rel="noopener noreferrer" class="olake-brand" aria-label="OLake Home">
+            <!-- Authentic OLake Logo Wave Glyphs -->
+            <svg class="olake-logo-svg" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 42 42" fill="none" aria-hidden="true">
+              <path fill="#193ae6" d="M41.785 0H0v22.548c17.383-1.832 41.72-2.29 29.8 4.123-8.074 4.343-2.538 5.945 2.308 7.348 3.154.913 6.016 1.741 4.645 3.186-2.791 2.942 2.742 4.112 5.032 4.459z"/>
+            </svg>
+            <span class="olake-brand-title">OLake</span>
+          </a>
+
+          <span class="olake-ai-pill">
+            <span class="ai-pulse-dot"></span>
+            OLake Assistant
+          </span>
+
+          <!-- Desktop Navigation Links -->
+          <div class="olake-nav-links">
+            <a href="https://olake.io" target="_blank" rel="noopener noreferrer" class="olake-nav-link">Home</a>
+            <a href="https://olake.io/olake-go/" target="_blank" rel="noopener noreferrer" class="olake-nav-link">OLake Go</a>
+            <a href="https://olake.io/olake-fusion/" target="_blank" rel="noopener noreferrer" class="olake-nav-link">OLake Fusion</a>
+            <a href="https://olake.io/docs" target="_blank" rel="noopener noreferrer" class="olake-nav-link">Docs</a>
+            <a href="https://olake.io/community" target="_blank" rel="noopener noreferrer" class="olake-nav-link">Community</a>
+          </div>
+        </div>
+
+        <!-- Right: Actions & Theme Toggle -->
+        <div class="olake-nav-right">
+          <a href="https://github.com/datazip-inc/olake" target="_blank" rel="noopener noreferrer" class="olake-github-btn" aria-label="Star OLake on GitHub">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            <span class="gh-text">Star</span>
+            <span class="gh-count">1.4k</span>
+          </a>
+
+          <button type="button" class="olake-icon-btn" id="theme-toggle" aria-label="Toggle dark/light theme" title="Toggle theme">
+            <!-- Moon for Dark -->
+            <svg class="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 1 21 12.79z"/>
+            </svg>
+            <!-- Sun for Light -->
+            <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          </button>
+
+          <button type="button" class="olake-icon-btn" id="settings-toggle" aria-label="Open settings" title="Assistant settings">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+
+          <button type="button" class="olake-primary-btn" id="new-chat-btn" aria-label="Start new chat">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            <span>New Chat</span>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Workspace (Sidebar + Chat Area) -->
+    <div class="olake-workspace">
+      <!-- Docusaurus-Style Docs Navigation Sidebar -->
+      <aside class="olake-sidebar" id="olake-sidebar" aria-label="Documentation Categories">
+        <div class="sidebar-top">
+          <div class="sidebar-search-box">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="topic-filter" placeholder="Search documentation topics…" aria-label="Filter documentation topics" />
+          </div>
+        </div>
+
+        <nav class="sidebar-tree" id="sidebar-tree" aria-label="Topics Hierarchy">
+          <!-- Category 1 -->
+          <div class="tree-category">
+            <div class="tree-category-title">GET STARTED</div>
+            <ul class="tree-items">
+              <li>
+                <button class="tree-item-btn" data-topic="overview" data-question="What is OLake Go and how does it replicate data to Apache Iceberg?">
+                  <span class="tree-icon">⚡</span>
+                  <span class="tree-label">Overview &amp; Architecture</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="quickstart" data-question="How do I get started with OLake in 5 minutes?">
+                  <span class="tree-icon">🚀</span>
+                  <span class="tree-label">Quickstart Guide</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="setup" data-question="How do I set up OLake using Docker Compose?">
+                  <span class="tree-icon">🐳</span>
+                  <span class="tree-label">Docker Compose (UI)</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="benchmarks" data-question="What are the performance benchmarks of OLake compared to Debezium and Airbyte?">
+                  <span class="tree-icon">📊</span>
+                  <span class="tree-label">Performance Benchmarks</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Category 2 -->
+          <div class="tree-category">
+            <div class="tree-category-title">MOVE AND MANAGE DATA</div>
+            <ul class="tree-items">
+              <li>
+                <button class="tree-item-btn" data-topic="postgres" data-question="How do I configure PostgreSQL CDC source in OLake?">
+                  <span class="tree-icon">🐘</span>
+                  <span class="tree-label">PostgreSQL (CDC &amp; Full)</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="mysql" data-question="How do I configure MySQL binlog replication in OLake?">
+                  <span class="tree-icon">🐬</span>
+                  <span class="tree-label">MySQL Source</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="mongo" data-question="How do I configure MongoDB change streams replication with OLake?">
+                  <span class="tree-icon">🍃</span>
+                  <span class="tree-label">MongoDB Source</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="kafka" data-question="How do I replicate Kafka topics into Apache Iceberg with OLake?">
+                  <span class="tree-icon">📨</span>
+                  <span class="tree-label">Apache Kafka Source</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="sync" data-question="What sync modes does OLake support (Full Refresh, Incremental, CDC)?">
+                  <span class="tree-icon">🔄</span>
+                  <span class="tree-label">Sync Modes &amp; CDC</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="schema" data-question="How does OLake handle schema evolution and new columns?">
+                  <span class="tree-icon">📐</span>
+                  <span class="tree-label">Schema Evolution</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Category 3 -->
+          <div class="tree-category">
+            <div class="tree-category-title">ICEBERG CATALOGS &amp; STORAGE</div>
+            <ul class="tree-items">
+              <li>
+                <button class="tree-item-btn" data-topic="glue" data-question="How do I configure AWS Glue Iceberg catalog with S3 in OLake?">
+                  <span class="tree-icon">☁️</span>
+                  <span class="tree-label">AWS Glue Data Catalog</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="hive" data-question="How do I connect OLake to an Apache Hive Metastore?">
+                  <span class="tree-icon">🐝</span>
+                  <span class="tree-label">Apache Hive Metastore</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="nessie" data-question="How do I configure Project Nessie REST catalog with OLake?">
+                  <span class="tree-icon">⛵</span>
+                  <span class="tree-label">Project Nessie Catalog</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="rest-catalog" data-question="How do I configure a custom Iceberg REST catalog with S3 / MinIO?">
+                  <span class="tree-icon">🌐</span>
+                  <span class="tree-label">REST Catalog &amp; MinIO</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Category 4 -->
+          <div class="tree-category">
+            <div class="tree-category-title">TABLE MAINTENANCE (FUSION)</div>
+            <ul class="tree-items">
+              <li>
+                <button class="tree-item-btn" data-topic="fusion" data-question="What is OLake Fusion and how does automated Iceberg table maintenance work?">
+                  <span class="tree-icon">⚡</span>
+                  <span class="tree-label">OLake Fusion Overview</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="compaction" data-question="How does OLake Fusion perform automated compaction on small files?">
+                  <span class="tree-icon">📦</span>
+                  <span class="tree-label">Automated Compaction</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="cleanup" data-question="How does snapshot expiry and orphan file deletion work in Fusion?">
+                  <span class="tree-icon">🧹</span>
+                  <span class="tree-label">Snapshot Expiry &amp; Cleanup</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Category 5 -->
+          <div class="tree-category">
+            <div class="tree-category-title">DEPLOYMENT &amp; OPS</div>
+            <ul class="tree-items">
+              <li>
+                <button class="tree-item-btn" data-topic="helm" data-question="How do I deploy OLake on Kubernetes using the official Helm chart?">
+                  <span class="tree-icon">☸️</span>
+                  <span class="tree-label">Kubernetes / Helm</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="cli" data-question="What are the essential OLake Go CLI commands and flags?">
+                  <span class="tree-icon">💻</span>
+                  <span class="tree-label">Docker &amp; CLI Commands</span>
+                </button>
+              </li>
+              <li>
+                <button class="tree-item-btn" data-topic="troubleshooting" data-question="How do I troubleshoot OLake sync failures and replication slot errors?">
+                  <span class="tree-icon">🔍</span>
+                  <span class="tree-label">Troubleshooting &amp; FAQs</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Category 6: Recent conversations -->
+          <div class="tree-category" id="recent-section">
+            <div class="tree-category-title">RECENT CONVERSATIONS</div>
+            <ul class="tree-items" id="recent-list">
+              <li class="tree-item-empty">No previous chats</li>
+            </ul>
+          </div>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <a href="https://olake.io/docs" target="_blank" rel="noopener noreferrer" class="sidebar-link-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+            Official OLake Docs ↗
+          </a>
+        </div>
+      </aside>
+
+      <!-- Sidebar Backdrop for Mobile -->
+      <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
+
+      <!-- Main Chat Experience Area -->
+      <main class="olake-chat-pane" role="main">
+        <!-- Message Stream Viewport -->
+        <div class="olake-stream-container" id="stream-container" role="log" aria-live="polite">
+          <!-- Hero Welcome View -->
+          <div class="olake-hero-welcome" id="welcome-screen">
+            <div class="hero-brand-mark">
+              <div class="hero-halo"></div>
+              <svg class="hero-svg" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 42 42" fill="none" aria-hidden="true">
+                <path fill="#193ae6" d="M41.785 0H0v22.548c17.383-1.832 41.72-2.29 29.8 4.123-8.074 4.343-2.538 5.945 2.308 7.348 3.154.913 6.016 1.741 4.645 3.186-2.791 2.942 2.742 4.112 5.032 4.459z"/>
+              </svg>
+            </div>
+
+            <h1 class="hero-headline">OLake Assistant</h1>
+            <p class="hero-description">
+              Your conversational copilot for <strong>OLake Go</strong> data replication and <strong>OLake Fusion</strong> Apache Iceberg table maintenance. Fast, grounded, and verified with source citations.
+            </p>
+
+            <div class="hero-status-pill" id="hero-status-pill">
+              <span class="status-pulse-dot"></span>
+              <span id="hero-status-text">Knowledge base loaded · Ready to answer questions</span>
+            </div>
+
+            <!-- Quick Suggestion Cards in OLake Design -->
+            <div class="olake-cards-grid" role="group" aria-label="Suggested starter queries">
+              <button class="olake-card" data-question="How do I set up OLake using Docker Compose?">
+                <div class="card-icon-wrap">🐳</div>
+                <div class="card-body">
+                  <div class="card-title">Docker Compose Setup <span class="card-arrow">→</span></div>
+                  <div class="card-desc">Spin up OLake Go and Web UI in under two minutes</div>
+                </div>
+              </button>
+
+              <button class="olake-card" data-question="How does PostgreSQL CDC replication work in OLake and how do I configure it?">
+                <div class="card-icon-wrap">⚡</div>
+                <div class="card-body">
+                  <div class="card-title">PostgreSQL CDC to Iceberg <span class="card-arrow">→</span></div>
+                  <div class="card-desc">Replicate WAL changes with zero data loss to S3</div>
+                </div>
+              </button>
+
+              <button class="olake-card" data-question="What Iceberg catalogs does OLake support and how do I configure AWS Glue with S3?">
+                <div class="card-icon-wrap">☁️</div>
+                <div class="card-body">
+                  <div class="card-title">AWS Glue &amp; Catalogs <span class="card-arrow">→</span></div>
+                  <div class="card-desc">Configure Glue, Nessie, Hive, or custom REST catalog</div>
+                </div>
+              </button>
+
+              <button class="olake-card" data-question="What is OLake Fusion and how does automated table maintenance compaction work?">
+                <div class="card-icon-wrap">🛠️</div>
+                <div class="card-body">
+                  <div class="card-title">OLake Fusion Compaction <span class="card-arrow">→</span></div>
+                  <div class="card-desc">Automated bin-packing, orphan cleanup &amp; snapshot expiry</div>
+                </div>
+              </button>
+
+              <button class="olake-card" data-question="How do I deploy OLake on Kubernetes using the official Helm chart?">
+                <div class="card-icon-wrap">☸️</div>
+                <div class="card-body">
+                  <div class="card-title">Kubernetes &amp; Helm Deploy <span class="card-arrow">→</span></div>
+                  <div class="card-desc">Production-ready helm values, PVCs &amp; scaling</div>
+                </div>
+              </button>
+
+              <button class="olake-card" data-question="How do I troubleshoot OLake CDC sync failures and replication slot errors?">
+                <div class="card-icon-wrap">🔍</div>
+                <div class="card-body">
+                  <div class="card-title">Troubleshooting &amp; Fixes <span class="card-arrow">→</span></div>
+                  <div class="card-desc">Diagnose WAL retention, timeout &amp; schema evolution</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Messages Stream Container -->
+          <div class="olake-messages-list" id="messages-list" role="list"></div>
+        </div>
+
+        <!-- Floating OLake Bottom Prompt Bar -->
+        <div class="olake-bottom-dock">
+          <div class="olake-prompt-card">
+            <!-- Textarea container -->
+            <div class="prompt-input-row">
+              <textarea
+                id="user-input"
+                class="olake-textarea"
+                placeholder="Ask about OLake Go, CDC setup, Iceberg catalogs, Fusion maintenance, or Helm deployment…"
+                rows="1"
+                maxlength="4000"
+                aria-label="Ask your question about OLake"
+                autocomplete="off"
+                spellcheck="true"
+              ></textarea>
+
+              <div class="prompt-actions-row">
+                <button type="button" class="action-btn-ghost" id="clear-chat-btn" title="Clear conversation" aria-label="Clear chat">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                </button>
+
+                <span class="char-pill" id="char-count">0/4000</span>
+
+                <button type="button" class="olake-send-btn" id="send-btn" aria-label="Send message" disabled>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M22 2L11 13" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M22 2L15 22 11 13 2 9l20-7z" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Bottom Disclaimer -->
+            <div class="prompt-footer-row">
+              <p class="disclaimer-text">
+                Every answer cites sources · Verify with <a href="https://olake.io/docs" target="_blank" rel="noopener noreferrer">official docs</a> &amp; <a href="https://github.com/datazip-inc/olake" target="_blank" rel="noopener noreferrer">GitHub</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Settings Slide-in Drawer -->
+    <div class="settings-drawer" id="settings-drawer" aria-hidden="true">
+      <div class="drawer-header">
+        <div class="drawer-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Assistant Preferences
+        </div>
+        <button type="button" class="drawer-close-btn" id="drawer-close" aria-label="Close settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="drawer-content">
+        <div class="drawer-field">
+          <label class="drawer-label" for="settings-api-key">Gemini API Key (Optional)</label>
+          <p class="drawer-hint">Enter your own key for direct high-speed Gemini 2.5 Flash responses, or leave blank to use the built-in OLake extractive knowledge engine.</p>
+          <input type="password" id="settings-api-key" class="drawer-input" placeholder="AIzaSy…" autocomplete="off" />
+        </div>
+
+        <div class="drawer-field">
+          <button type="button" class="olake-primary-btn" id="save-settings-btn" style="width: 100%; justify-content: center;">
+            Save Preferences
+          </button>
+        </div>
+
+        <div class="drawer-divider"></div>
+
+        <div class="drawer-section">
+          <h4>About OLake Knowledge Base</h4>
+          <p class="drawer-text">This assistant is trained on the full documentation and open-source repositories:</p>
+          <ul class="drawer-repo-list">
+            <li><a href="https://github.com/datazip-inc/olake" target="_blank" rel="noopener noreferrer">datazip-inc/olake</a> — Core Go EL engine</li>
+            <li><a href="https://github.com/datazip-inc/olake-ui" target="_blank" rel="noopener noreferrer">datazip-inc/olake-ui</a> — Modern management UI</li>
+            <li><a href="https://github.com/datazip-inc/olake-fusion" target="_blank" rel="noopener noreferrer">datazip-inc/olake-fusion</a> — Iceberg table maintenance</li>
+            <li><a href="https://github.com/datazip-inc/olake-helm" target="_blank" rel="noopener noreferrer">datazip-inc/olake-helm</a> — Production Kubernetes chart</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true"></div>
+
+    <!-- Toast Notifications -->
+    <div class="olake-toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+  </div>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
