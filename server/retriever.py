@@ -60,37 +60,11 @@ class Retriever:
         terms = [t for t in _tokenize(query) if t not in STOPWORDS]
         if not terms:
             terms = _tokenize(query)
+        if not terms:
+            return []
+
         q_lower = query.lower()
-        expanded_terms = list(terms)
-        if any(w in q_lower for w in ["write to", "write data to", "destination", "destinations", "where can olake write"]):
-            expanded_terms.extend(["destinations", "destination", "parquet", "iceberg", "s3"])
-        if "catalog" in q_lower or "catalogs" in q_lower:
-            expanded_terms.extend(["catalogs", "glue", "hive", "jdbc", "rest"])
-        if "sync mode" in q_lower or "sync modes" in q_lower:
-            expanded_terms.extend(["full", "refresh", "incremental", "cdc"])
-        if "incremental" in q_lower:
-            expanded_terms.extend(["cursor", "state", "deletes", "greater"])
-        if any(w in q_lower for w in ["continuous", "daemon", "running process"]):
-            expanded_terms.extend(["bounded", "session", "schedule", "initial_wait_time"])
-        if "cron" in q_lower or "schedule" in q_lower:
-            expanded_terms.extend(["5-field", "7-field", "quartz", "cron"])
-        if any(w in q_lower for w in ["column", "columns", "metadata"]):
-            expanded_terms.extend(["_op_type", "_olake_id", "_olake_timestamp", "_cdc_timestamp"])
-        if "upsert" in q_lower or "append" in q_lower:
-            expanded_terms.extend(["latest", "history", "kafka", "upsert", "append"])
-        if any(w in q_lower for w in ["engine", "engines", "query engines"]):
-            expanded_terms.extend(["spark", "trino", "athena", "duckdb", "snowflake"])
-        if any(w in q_lower for w in ["install", "login", "credentials", "default login"]):
-            expanded_terms.extend(["docker", "compose", "admin", "password", "8000"])
-        if any(w in q_lower for w in ["cli", "command", "commands"]):
-            expanded_terms.extend(["spec", "check", "discover", "sync", "clear-destination"])
-        if "postgres" in q_lower:
-            expanded_terms.extend(["pgoutput", "wal_level", "publication", "replication", "slot"])
-        if "mysql" in q_lower:
-            expanded_terms.extend(["binlog", "format", "row", "server-id", "privileges"])
-
-
-        qtf = Counter(expanded_terms)
+        qtf = Counter(terms)
         is_overview_query = (
             any(phrase in q_lower for phrase in ["what is", "what does", "about olake", "explain olake", "overview", "introduction", "tell me about", "who made"])
             and "olake" in q_lower

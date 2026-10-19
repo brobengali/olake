@@ -47,8 +47,8 @@ ALLOWED_ORIGINS = [o.strip() for o in os.environ.get("CORS_ORIGINS", "*").split(
 SYNC_SECRET = os.environ.get("SYNC_SECRET", "").strip()
 AUTO_SYNC_HOURS = float(os.environ.get("AUTO_SYNC_HOURS", "12"))
 
-OFF_TOPIC = re.compile(
-    r"\b(exploit|malware|ransomware|sql injection payload|make a bomb|child sexual|poem|cricket|ignore all previous|print your system prompt|show your system prompt|reveal your api key|what is your api key)\b",
+HARMFUL_CONTENT = re.compile(
+    r"\b(exploit|malware|ransomware|sql injection payload|make a bomb|child sexual)\b",
     re.I,
 )
 
@@ -243,10 +243,10 @@ async def chat(payload: ChatRequest, request: Request) -> JSONResponse:
     question = payload.get_message()
     if not question:
         raise HTTPException(status_code=400, detail="Field 'message' or 'question' is required and cannot be empty.")
-    if OFF_TOPIC.search(question):
+    if HARMFUL_CONTENT.search(question):
         return JSONResponse(
             {
-                "answer": "I can only help with OLake setup, sources, sync, catalogs, maintenance, deployment, and troubleshooting.",
+                "answer": "I can only assist with OLake documentation, architecture, deployment, and data engineering topics.",
                 "known": False,
                 "sources": [{"title": "OLake docs", "url": "https://olake.io/docs", "source": "docs", "heading": "Docs"}],
             }
@@ -289,9 +289,9 @@ async def ask_endpoint(payload: AskRequest, request: Request) -> JSONResponse:
     if not query:
         raise HTTPException(status_code=400, detail="Field 'question' or 'message' is required.")
 
-    if OFF_TOPIC.search(query):
+    if HARMFUL_CONTENT.search(query):
         return JSONResponse({
-            "answer": "I can only help with OLake setup, sources, sync, catalogs, maintenance, deployment, and troubleshooting.",
+            "answer": "I can only assist with OLake documentation, architecture, deployment, and data engineering topics.",
             "sources": ["https://olake.io/docs"],
         })
 

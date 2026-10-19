@@ -6,7 +6,7 @@ topics: [release, update, versions, changelog, deploy, fixes, features]
 ---
 
 # Deployed OLake Upstream Versions & Release Notes
-Synchronized at: 2026-10-18T08:11:11.230317+00:00
+Synchronized at: 2026-10-19T06:16:59.496331+00:00
 
 ## OLake Go Core (v0.12.1)
 - **Repository**: [datazip-inc/olake](https://github.com/datazip-inc/olake)

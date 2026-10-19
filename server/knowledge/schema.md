@@ -22,6 +22,15 @@ OLake Go discovers schema at the start of every sync.
 - Delete source table: destination keeps history, no new data.
 - Rename table: treated as a new stream. Old Iceberg table keeps history. Recreating a table with the same name but different structure should be treated as a new stream to avoid field-ID collisions.
 
+## Metadata Columns
+
+OLake automatically appends standard metadata columns to destination tables for tracking and deduplication:
+- `_op_type`: change operation type ('r' = snapshot read, 'c' = insert, 'u' = update, 'd' = delete)
+- `_olake_id`: deterministic unique record identifier used for deduplication
+- `_olake_timestamp`: timestamp when OLake wrote the record to the destination
+- `_cdc_timestamp`: timestamp when the change event occurred at the source database
+(Source-specific drivers may also append position indicators, such as `_cdc_lsn` for PostgreSQL or `_kafka_offset` for Kafka).
+
 ## Type promotions (Iceberg v2 widening)
 
 INT → LONG, FLOAT → DOUBLE, DATE → TIMESTAMP/TIMESTAMP_NS, DECIMAL(P,S) → DECIMAL(P',S) with P' > P. INT into FLOAT/DOUBLE and BIGINT into DOUBLE are treated as safe numeric writes.
